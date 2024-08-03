@@ -18,6 +18,7 @@ const Router = createBrowserRouter(
                     path: "/",
                     element: <Home />,
                 },
+               
                 {
 
                 
@@ -25,10 +26,7 @@ const Router = createBrowserRouter(
                 path: "login",
                 element: <LoginPage />,
             },
-            {
-                path: "songs",
-                element: <SongList />,
-            },
+           
             {
                 path: "profile",
                 element: (

@@ -1,110 +1,100 @@
-import { useState, useEffect } from "react";
-import useFetch from "../../hooks/useFetch";
+import React, { useEffect, useState, useRef } from "react";
 
 function AlbumList() {
-    const [{ data: albums, isError, isLoading }, doFetch] = useFetch(
-        "https://sandbox.academiadevelopers.com/harmonyhub/albums/"
-    );
-    const [newAlbum, setNewAlbum] = useState({ title: "", artist: "" });
-    const [editAlbum, setEditAlbum] = useState(null);
+    const [albums, setAlbums] = useState([]);
+    const [page, setPage] = useState(1);
+    const [nextUrl, setNextUrl] = useState(null);
+    const [isError, setIsError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const observerRef = useRef();
+    const lastAlbumElementRef = useRef();
+
+    const doFetch = async () => {
+        setIsLoading(true);
+        const query = new URLSearchParams({
+            page,
+            page_size: 5,
+            ordering: `-created_at`,
+            public: true, // Assuming the API uses this query param to filter public albums
+        }).toString();
+
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL}harmonyhub/albums/?${query}`
+            );
+            if (!response.ok) throw new Error("Network response was not ok");
+            const data = await response.json();
+            if (data.results) {
+                setAlbums((prevAlbums) => [...prevAlbums, ...data.results]);
+                setNextUrl(data.next);
+            }
+        } catch (error) {
+            setIsError(true);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        doFetch(); // Fetch albums on component mount
-    }, [doFetch]);
+        doFetch();
+    }, [page]);
 
-    const handleCreate = async () => {
-        await doFetch({
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newAlbum),
+    useEffect(() => {
+        if (isLoading) return;
+
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+        }
+
+        observerRef.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && nextUrl) {
+                setPage((prevPage) => prevPage + 1);
+            }
         });
-        setNewAlbum({ title: "", artist: "" });
-        doFetch(); // Refresh the album list
-    };
 
-    const handleUpdate = async () => {
-        if (!editAlbum) return;
-        await doFetch({
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(editAlbum),
-        });
-        setEditAlbum(null);
-        doFetch(); // Refresh the album list
-    };
+        if (lastAlbumElementRef.current) {
+            observerRef.current.observe(lastAlbumElementRef.current);
+        }
+    }, [isLoading, nextUrl]);
 
-    const handleDelete = async (id) => {
-        await doFetch({
-            method: "DELETE",
-        });
-        doFetch(); // Refresh the album list
-    };
-
-    if (isLoading) return <p>Cargando...</p>;
-    if (isError) return <p>Error al cargar los álbumes.</p>;
-    if (!albums || albums.length === 0) return <p>No hay álbumes disponibles.</p>;
+    if (isError) return <p>Error loading albums.</p>;
+    if (!albums.length && !isLoading) return <p>No albums available.</p>;
 
     return (
         <div>
-            <div className="my-5">
-                <h2 className="title">Lista de Álbumes</h2>
-                <ul>
-                    {albums.map((album) => (
-                        <div key={album.id} className="column is-two-third">
-                            <h3>{album.title}</h3>
-                            <p>{album.artist}</p>
-                            <button onClick={() => handleDelete(album.id)} className="button is-danger">
-                                Eliminar
-                            </button>
-                            <button onClick={() => setEditAlbum(album)} className="button is-warning">
-                                Editar
-                            </button>
-                        </div>
-                    ))}
-                </ul>
-                <div>
-                    <h3 className="title">Agregar Nuevo Álbum</h3>
-                    <input
-                        type="text"
-                        placeholder="Título"
-                        value={newAlbum.title}
-                        onChange={(e) => setNewAlbum({ ...newAlbum, title: e.target.value })}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Artista"
-                        value={newAlbum.artist}
-                        onChange={(e) => setNewAlbum({ ...newAlbum, artist: e.target.value })}
-                    />
-                    <button onClick={handleCreate} className="button is-primary">
-                        Agregar
-                    </button>
-                </div>
-                {editAlbum && (
-                    <div>
-                        <h3 className="title">Editar Álbum</h3>
-                        <input
-                            type="text"
-                            placeholder="Título"
-                            value={editAlbum.title}
-                            onChange={(e) => setEditAlbum({ ...editAlbum, title: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Artista"
-                            value={editAlbum.artist}
-                            onChange={(e) => setEditAlbum({ ...editAlbum, artist: e.target.value })}
-                        />
-                        <button onClick={handleUpdate} className="button is-warning">
-                            Actualizar
-                        </button>
-                    </div>
-                )}
+            <h2 className="text-2xl font-bold mb-4">Public Albums</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {albums.map((album, index) => {
+                    if (albums.length === index + 1) {
+                        return (
+                            <div
+                                key={album.id}
+                                ref={lastAlbumElementRef}
+                                className="p-4 bg-white rounded-lg shadow-md"
+                            >
+                                <h3 className="text-xl font-semibold mb-2">{album.title}</h3>
+                                <p className="text-gray-700">{album.artist}</p>
+                                <p className="text-gray-500">{album.release_date}</p>
+                                {/* You can add more details or an album cover here */}
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div
+                                key={album.id}
+                                className="p-4 bg-white rounded-lg shadow-md"
+                            >
+                                <h3 className="text-xl font-semibold mb-2">{album.title}</h3>
+                                <p className="text-gray-700">{album.artist}</p>
+                                <p className="text-gray-500">{album.release_date}</p>
+                                {/* You can add more details or an album cover here */}
+                            </div>
+                        );
+                    }
+                })}
             </div>
+            {isLoading && <p className="text-center mt-4">Loading more albums...</p>}
         </div>
     );
 }

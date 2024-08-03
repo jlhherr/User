@@ -1,38 +1,21 @@
-import { useEffect, useState, useContext, AuthContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React from 'react';
 
-const AlbumDetail = () => {
-  const { id } = useParams();
-  const [album, setAlbum] = useState(null);
-  const { authToken } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    axios.get(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${id}/`, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    }).then(response => {
-      setAlbum(response.data);
-    });
-  }, [id, authToken]);
-
-  const deleteAlbum = () => {
-    axios.delete(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${id}/`, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    }).then(() => {
-      navigate('/albums');
-    });
-  };
-
-  if (!album) return <div>Loading...</div>;
+const DetailPage = ({ type, details }) => {
+  const { name, songs } = details; 
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-4xl font-bold text-center my-8">{album.title}</h1>
-      <p>{album.description}</p>
-      <button onClick={deleteAlbum} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Delete Album</button>
+    <div>
+      <h1>{name} ({type})</h1>
+      <div>
+        {songs.map((song) => (
+          <div key={song.id}>
+            <span>{song.title}</span>
+            <button onClick={() => console.log('Playing', song.title)}>Play</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AlbumDetail;
+export default DetailPage;
