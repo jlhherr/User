@@ -1,50 +1,26 @@
-/*import React from "react";
-import { useContext } from "react";
-import ThemeContext from "../../contexts/ThemeContext";
+import useFetch from "../../hooks/useFetch";
+import SongDelete from "./SongDelete";
+import { useState } from "react";
 
-function SongCard({ song }) {
-    const { theme } = useContext(ThemeContext);
+function SongCard({ song, user_ID, onDelete }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { isLoading, isError, doFetch } = useFetch();
 
-    const backgroundClassName = "has-background-" + theme;
+    // Función para manejar la eliminación de la canción
+    const handleDelete = async () => {
+        try {
+            await doFetch({
+                url: `${import.meta.env.VITE_API_BASE_URL}harmonyhub/songs/${song.id}/`,
+                method: 'DELETE',
+            });
+            onDelete(song.id); // Notificar a SongList para actualizar la lista
+        } catch (error) {
+            console.error("Error al eliminar la canción:", error);
+        }
+    };
 
-    let textClassName = "has-text-";
-
-    if (theme === "dark") {
-        textClassName += "light";
-    } else {
-        textClassName += "dark";
-    }
-
-    const className = backgroundClassName + " " + textClassName;
-   
-   
-   
     return (
-        <div className={`card ${className}`}>
-            <div className="card-content">
-                <div className="media">
-                    <div className="media-content">
-                        <p className={`title is-4 ${textClassName}`}>
-                            {song.title}
-                        </p>
-                    </div>
-                </div>
-                <div className="content">
-                    <audio controls>
-                        <source src={song.song_file} type="audio/mpeg" />
-                        Tu navegador no soporta el elemento de audio.
-                    </audio>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-export default SongCard;*/
-
-function SongCard({ song }) {
-    return (
-        <div className={`card has-background-dark`}>
+        <div className={`card has-background-dark columns my-1 mx-2`}>
             <div className="card-content">
                 <div className="media">
                     <div className="media-content">
@@ -60,9 +36,20 @@ function SongCard({ song }) {
                     </audio>
                 </div>
             </div>
+            {song.owner === user_ID ? (
+                <div className="column" onClick={() => setIsModalOpen(true)}>
+                    <button className="button is-danger">Eliminar</button>
+                </div>
+            ) : null}
+            {isModalOpen && (
+                <SongDelete
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onDelete={handleDelete} // Pasar la función handleDelete
+                />
+            )}
         </div>
     );
 }
 
 export default SongCard;
-

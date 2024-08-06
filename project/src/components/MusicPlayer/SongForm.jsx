@@ -1,71 +1,78 @@
-// src/components/MusicPlayer/SongForm.jsx
-import React, { useState } from 'react';
-import { createSong } from '../../services/api';
+import React, { useState, useEffect } from 'react';
 
-const SongForm = () => {
-  const [songData, setSongData] = useState({
-    title: '',
-    artist: '',
-    album: '',
-    // Otros campos según sea necesario
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSongData({
-      ...songData,
-      [name]: value,
+const SongForm = ({ onCreate, onUpdate, editingSong }) => {
+    const [formData, setFormData] = useState({
+        title: '',
+        artist: '',
+        created_at: '',
     });
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await createSong(songData);
-      // Manejo después de la creación exitosa
-    } catch (error) {
-      console.error('Error creating song:', error);
-    }
-  };
+    useEffect(() => {
+        if (editingSong) {
+            setFormData({
+                title: editingSong.title,
+                artist: editingSong.artist,
+                created_at: editingSong.created_at,
+            });
+        } else {
+            setFormData({
+                title: '',
+                artist: '',
+                created_at: '',
+            });
+        }
+    }, [editingSong]);
 
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Create New Song</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          value={songData.title}
-          onChange={handleInputChange}
-          placeholder="Song Title"
-          className="border p-2 mb-2 w-full"
-        />
-        <input
-          type="text"
-          name="artist"
-          value={songData.artist}
-          onChange={handleInputChange}
-          placeholder="Artist"
-          className="border p-2 mb-2 w-full"
-        />
-        <input
-          type="text"
-          name="album"
-          value={songData.album}
-          onChange={handleInputChange}
-          placeholder="Album"
-          className="border p-2 mb-2 w-full"
-        />
-        {/* Otros campos según sea necesario */}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded"
-        >
-          Create Song
-        </button>
-      </form>
-    </div>
-  );
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (editingSong) {
+            onUpdate({ ...editingSong, ...formData });
+        } else {
+            onCreate(formData);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Título:</label>
+                <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Artista:</label>
+                <input
+                    type="text"
+                    name="artist"
+                    value={formData.artist}
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <label>Fecha de creación:</label>
+                <input
+                    type="datetime-local"
+                    name="created_at"
+                    value={formData.created_at}
+                    onChange={handleChange}
+                />
+            </div>
+            <button type="submit">
+                {editingSong ? 'Actualizar' : 'Crear'} Canción
+            </button>
+        </form>
+    );
 };
 
 export default SongForm;

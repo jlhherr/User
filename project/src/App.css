@@ -1,41 +1,57 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f0f0f0;
+.card {
+  background: #333; /* Fondo oscuro para la tarjeta */
+  border-radius: 6px; /* Bordes redondeados */
+  overflow: hidden; /* Ocultar contenido que sobresalga */
 }
 
-.container {
-  padding: 20px;
+.card-image img {
+  object-fit: cover; /* Ajustar la imagen para cubrir el área */
+  max-height: 240px; /* Limitar la altura máxima de la imagen */
 }
 
-/* src/App.css */
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border-radius: 4px;
-  width: 80%;
-  max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.audio {
+  width: 100%; /* Hacer que el reproductor de audio ocupe el ancho completo */
+  margin-top: 1rem; /* Espacio superior para el reproductor de audio */
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+.card-image img {
+  max-height: 200px; /* Ajusta la altura de la imagen del álbum */
+  object-fit: cover;
 }
 
-.modal-content {
-  max-height: 500px;
-  overflow-y: auto;
+.card-content .title {
+  margin-bottom: 0.5rem;
+}
+
+.card-content .subtitle {
+  margin-bottom: 0.5rem;
+}
+
+
+.has-background-light {
+  background-color: #ffffff; /* Color de fondo claro */
+}
+
+.has-background-dark {
+  background-color: #333333; /* Color de fondo oscuro */
+}
+
+.has-text-light {
+  color: #ffffff; /* Color del texto claro */
+}
+
+.has-text-dark {
+  color: #000000; /* Color del texto oscuro */
+}
+
+/* Estilos adicionales para la barra de navegación */
+.navbar {
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.navbar-item {
+  margin: 0 1rem;
+  text-decoration: none;
 }

@@ -1,32 +1,32 @@
-import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "../components/Auth/LoginPage";
-import SongList from "../components/MusicPlayer/SongList";
-import Layout from "./Layout";
-import AboutPage from "../components/AboutPage";
-import ProtectedRoute from "./ProtectedRoute";
-import NotFound from "../components/NotFound";
+
 import Home from "../components/Home";
+import Login from "../components/Auth/Login";
+import Layout from "./Layout";
+import ProtectedRoute from "./ProtectedRoute";
 import Profile from "../components/Auth/Profile";
+import SongList from "../components/MusicPlayer/SongList";
 
-const Router = createBrowserRouter(
-    [
-        {
-            element: <Layout />,
-            children: [
-                {
-                    path: "/",
-                    element: <Home />,
-                },
-               
-                {
-
-                
-
-                path: "login",
-                element: <LoginPage />,
+const Router = createBrowserRouter([
+    {
+        element: <Layout />,
+        children: [
+            {
+                 path: "/",
+                element: <SongList/>,
             },
            
+                    
+                
+            
+            {
+                path: "login",
+                element: <Login />,
+            },
+            {
+                path: "songs",
+                element: <SongList />,
+            },
             {
                 path: "profile",
                 element: (
@@ -35,16 +35,12 @@ const Router = createBrowserRouter(
                     </ProtectedRoute>
                 ),
             },
-            {
-                path: "aboutPage",
-                element: <AboutPage />,
-                },
-               
         ],
     },
     {
         path: "*",
-        element: <NotFound/>,
+        element: <h1>Not Found</h1>,
     },
 ]);
+
 export { Router };

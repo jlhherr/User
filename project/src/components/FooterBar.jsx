@@ -1,4 +1,3 @@
-import React from "react";
 import { useContext } from "react";
 import ThemeContext from "../contexts/ThemeContext";
 
@@ -40,7 +39,6 @@ function FooterBar({ socialNetworks, appName }) {
             </div>
         </footer>
     );
-    
 }
 
 export default FooterBar;

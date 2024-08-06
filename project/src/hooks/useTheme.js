@@ -11,4 +11,3 @@ function useTheme() {
 }
 
 export default useTheme;
-

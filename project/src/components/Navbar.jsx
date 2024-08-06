@@ -1,4 +1,3 @@
-import React from "react";
 import appLogo from "../assets/react.svg";
 import NavMenu from "./NavMenu";
 import { useContext } from "react";
@@ -42,8 +41,8 @@ function NavBar({ appName }) {
                 <NavMenu
                     items={[
                         { text: "Home", url: "/" },
-                        { text: "About", url: "/AboutPage" },
-                        { text: "Contact", url: "/Contact" },
+                        { text: "About", url: "/about" },
+                        { text: "Contact", url: "#contact" },
                     ]}
                 />
                 <button

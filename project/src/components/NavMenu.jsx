@@ -1,8 +1,7 @@
-import React from "react";
 import { useContext } from "react";
 import ThemeContext from "../contexts/ThemeContext";
 import { Link } from "react-router-dom";
-import Home from "./Home";
+
 function NavMenu({ items }) {
     const { theme } = useContext(ThemeContext);
 
@@ -25,8 +24,7 @@ function NavMenu({ items }) {
                     <Link
                         key={index}
                         className={"navbar-item " + className}
-                        to={item}
-       
+                        to={item.url}
                     >
                         {item.text}
                     </Link>

@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@teishi/bulma_theme": "^0.0.2",
     "axios": "^1.7.2",
     "bulma": "^1.0.2",
     "jwt-decode": "^4.0.0",
+    "project": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-modal": "^3.16.1",

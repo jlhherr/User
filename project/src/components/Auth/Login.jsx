@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-function LoginPage() {
+function Login() {
     const usernameRef = useRef("");
     const passwordRef = useRef("");
     const [isError, setIsError] = useState(false);
@@ -55,7 +55,7 @@ function LoginPage() {
                                     type="text"
                                     id="username"
                                     name="username"
-                                  value={usernameRef}
+                                    ref={usernameRef}
                                 />
                                 <span className="icon is-small is-left">
                                     <i className="fas fa-user"></i>
@@ -70,7 +70,7 @@ function LoginPage() {
                                     type="password"
                                     id="password"
                                     name="password"
-                        value={passwordRef}
+                                    ref={passwordRef}
                                 />
                                 <span className="icon is-small is-left">
                                     <i className="fas fa-lock"></i>
@@ -96,4 +96,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage;
+export default Login;
