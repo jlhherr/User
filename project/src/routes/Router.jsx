@@ -1,45 +1,41 @@
-import { createBrowserRouter } from "react-router-dom";
-
-import Home from "../components/Home";
-import Login from "../components/Auth/Login";
-import Layout from "./Layout";
-import ProtectedRoute from "./ProtectedRoute";
-import Profile from "../components/Auth/Profile";
-import SongList from "../components/MusicPlayer/SongList";
+// routes/Router.js
+import { createBrowserRouter } from 'react-router-dom';
+import Home from '../components/Home';
+import Login from '../components/Auth/Login';
+import SongList from '../components/MusicPlayer/SongList';
+import Layout from './Layout';
+import AboutPage from '../components/AboutPage';
+import ProtectedRoute from '../routes/ProtectedRoute';
+import NotFound from '../components/NotFound';
 
 const Router = createBrowserRouter([
     {
         element: <Layout />,
         children: [
             {
-                 path: "/",
-                element: <SongList/>,
+                index: true,
+                path: "/",
+                element: <Home />,
             },
-           
-                    
-                
-            
             {
                 path: "login",
                 element: <Login />,
             },
             {
                 path: "songs",
-                element: <SongList />,
+                element: 
+                     <SongList  />
+            
             },
             {
-                path: "profile",
-                element: (
-                    <ProtectedRoute>
-                        <Profile />
-                    </ProtectedRoute>
-                ),
+                path: "about",
+                element: <AboutPage />,
             },
         ],
     },
     {
         path: "*",
-        element: <h1>Not Found</h1>,
+        element: <NotFound />,
     },
 ]);
 

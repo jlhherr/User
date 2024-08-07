@@ -1,36 +1,81 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MusicContext } from '../MusicContext';
+import React, { useState } from 'react';
+import useFetch from "../../hooks/useFetch";
 
-const AddSong = () => {
-  const { addSong } = useContext(MusicContext);
-  const navigate = useNavigate();
-  const [song, setSong] = useState({ title: '' });
+function AddPlaylistEntry({ playlistId, userId }) {
+    const [order, setOrder] = useState(1);
+    const [songId, setSongId] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { doFetch } = useFetch();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addSong(song).then(() => navigate('/'));
-  };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setIsSubmitting(true);
 
-  return (
-    <div className="container mx-auto">
-      <h1 className="text-4xl font-bold text-center my-8">Add New Song</h1>
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            value={song.title}
-            onChange={(e) => setSong({ ...song, title: e.target.value })}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
+        const newEntry = {
+            order: parseInt(order),
+            playlist: playlistId,
+            song: parseInt(songId),
+        };
+
+        try {
+            const response = await doFetch({
+                url: `${import.meta.env.VITE_API_BASE_URL}harmonyhub/playlist_entries/`,
+                method: 'POST',
+                body: JSON.stringify(newEntry),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            // Assuming response contains the created entry data
+            console.log('Entrada añadida:', response);
+        } catch (error) {
+            console.error('Error al añadir la entrada:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="box">
+            <h2 className="title">Añadir Entrada a la Lista de Reproducción</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="field">
+                    <label className="label">Orden:</label>
+                    <div className="control">
+                        <input
+                            className="input"
+                            type="number"
+                            value={order}
+                            onChange={(e) => setOrder(e.target.value)}
+                            required
+                        />
+                    </div>
+                </div>
+                <div className="field">
+                    <label className="label">ID de la Canción:</label>
+                    <div className="control">
+                        <input
+                            className="input"
+                            type="number"
+                            value={songId}
+                            onChange={(e) => setSongId(e.target.value)}
+                            required
+                        />
+                    </div>
+                </div>
+                <div className="field">
+                    <button
+                        className="button is-primary"
+                        type="submit"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Añadiendo...' : 'Añadir Entrada'}
+                    </button>
+                </div>
+            </form>
         </div>
-        <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Song</button>
-      </form>
-    </div>
-  );
-};
+    );
+}
 
-export default AddSong;
+export default AddPlaylistEntry;

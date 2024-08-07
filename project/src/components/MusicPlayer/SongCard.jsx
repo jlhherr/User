@@ -1,23 +1,10 @@
 import useFetch from "../../hooks/useFetch";
-import SongDelete from "./SongDelete";
+import DeleteSongModal from "../MusicPlayer/DeleteSongModal";
 import { useState } from "react";
 
-function SongCard({ song, user_ID, onDelete }) {
+function SongCard({ song, user_ID }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { isLoading, isError, doFetch } = useFetch();
-
-    // Función para manejar la eliminación de la canción
-    const handleDelete = async () => {
-        try {
-            await doFetch({
-                url: `${import.meta.env.VITE_API_BASE_URL}harmonyhub/songs/${song.id}/`,
-                method: 'DELETE',
-            });
-            onDelete(song.id); // Notificar a SongList para actualizar la lista
-        } catch (error) {
-            console.error("Error al eliminar la canción:", error);
-        }
-    };
+    const { data, isLoading, isError, doFetch } = useFetch();
 
     return (
         <div className={`card has-background-dark columns my-1 mx-2`}>
@@ -36,18 +23,19 @@ function SongCard({ song, user_ID, onDelete }) {
                     </audio>
                 </div>
             </div>
-            {song.owner === user_ID ? (
+            {song.owner == user_ID ? (
                 <div className="column" onClick={() => setIsModalOpen(true)}>
                     <button className="button is-danger">Eliminar</button>
                 </div>
             ) : null}
-            {isModalOpen && (
-                <SongDelete
+            {isModalOpen ? (
+                <DeleteSongModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
-                    onDelete={handleDelete} // Pasar la función handleDelete
+                    song_id={song.id}
+                    onDelete={{ data, isLoading, isError, doFetch }}
                 />
-            )}
+            ) : null}
         </div>
     );
 }
