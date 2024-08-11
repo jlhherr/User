@@ -2,19 +2,24 @@ import React, { useState, useEffect } from 'react';
 import useFetch from '../../hooks/useFetch';
 
 function EditSongModal({ isOpen, onClose, song_id, songDetails, onUpdate }) {
-    const [title, setTitle] = useState(songDetails.title || '');
-    const [songFile, setSongFile] = useState(songDetails.song_file || '');
+    const [title, setTitle] = useState('');
+    const [songFile, setSongFile] = useState('');
     const { doFetch, isLoading, isError } = useFetch();
 
     useEffect(() => {
         if (songDetails) {
-            setTitle(songDetails.title);
-            setSongFile(songDetails.song_file);
+            setTitle(songDetails.title || '');
+            setSongFile(songDetails.song_file || '');
         }
     }, [songDetails]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        if (!title || !songFile) {
+            alert('Por favor, complete todos los campos.');
+            return;
+        }
 
         const updatedSong = { title, song_file: songFile };
 
@@ -27,19 +32,28 @@ function EditSongModal({ isOpen, onClose, song_id, songDetails, onUpdate }) {
                     'Content-Type': 'application/json',
                 },
             });
-            onUpdate(); // Callback to refresh the song list
-            onClose(); // Close modal after update
+            onUpdate(); // Callback songlist
+            onClose(); // Close modal  update
         } catch (error) {
             console.error('Error updating song:', error);
         }
     };
 
+    if (!isOpen) return null;
+
     return (
-        <div className={`modal ${isOpen ? 'is-active' : ''}`}>
+        <div className="modal is-active">
             <div className="modal-background" onClick={onClose}></div>
-            <div className="modal-content">
-                <div className="box">
-                    <h1 className="title">Editar Canción</h1>
+            <div className="modal-card">
+                <header className="modal-card-head">
+                    <p className="modal-card-title">Editar Canción</p>
+                    <button
+                        className="delete"
+                        aria-label="close"
+                        onClick={onClose}
+                    ></button>
+                </header>
+                <section className="modal-card-body">
                     <form onSubmit={handleSubmit}>
                         <div className="field">
                             <label className="label">Título</label>
@@ -78,9 +92,8 @@ function EditSongModal({ isOpen, onClose, song_id, songDetails, onUpdate }) {
                             </div>
                         </div>
                     </form>
-                </div>
+                </section>
             </div>
-            <button className="modal-close is-large" aria-label="close" onClick={onClose}></button>
         </div>
     );
 }

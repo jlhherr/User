@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import SongCard from "./SongCard";
 import { useAuth } from "../../contexts/AuthContext";
 
-
 function SongList() {
     const [page, setPage] = useState(1);
     const [songs, setSongs] = useState([]);
@@ -10,7 +9,6 @@ function SongList() {
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [filters, setFilters] = useState({});
-    
 
     const { user__id } = useAuth("state");
 
@@ -95,7 +93,7 @@ function SongList() {
 
     return (
         <div>
-            <div className="my-5">
+            <div className="card violet-background columns mx-0">
                 <h2 className="title">Lista de Canciones</h2>
                 <form className="box" onSubmit={handleSearch}>
                     <div className="field">
@@ -171,3 +169,4 @@ function SongList() {
 }
 
 export default SongList;
+

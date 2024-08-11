@@ -1,11 +1,11 @@
-// routes/Router.js
+
 import { createBrowserRouter } from 'react-router-dom';
 import Home from '../components/Home';
 import Login from '../components/Auth/Login';
 import SongList from '../components/MusicPlayer/SongList';
 import Layout from './Layout';
-import AboutPage from '../components/AboutPage';
-import ProtectedRoute from '../routes/ProtectedRoute';
+import Profile from '../components/Auth/Profile';
+import ProtectedRoute from './ProtectedRoute';
 import NotFound from '../components/NotFound';
 
 const Router = createBrowserRouter([
@@ -13,8 +13,8 @@ const Router = createBrowserRouter([
         element: <Layout />,
         children: [
             {
-                index: true,
-                path: "/",
+                index: true, 
+                //path: "/",
                 element: <Home />,
             },
             {
@@ -23,13 +23,15 @@ const Router = createBrowserRouter([
             },
             {
                 path: "songs",
-                element: 
-                     <SongList  />
-            
+                element: (
+                    <ProtectedRoute>
+                        <SongList />
+                    </ProtectedRoute>
+                ),
             },
             {
-                path: "about",
-                element: <AboutPage />,
+                path: "profile",
+                element: <Profile />,
             },
         ],
     },
@@ -39,4 +41,4 @@ const Router = createBrowserRouter([
     },
 ]);
 
-export { Router };
+export  {Router};

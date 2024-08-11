@@ -1,28 +1,18 @@
-import appLogo from "../assets/react.svg";
+import appLogo from "../assets/logo3.jpg";
 import NavMenu from "./NavMenu";
-import { useContext } from "react";
-import ThemeContext from "../contexts/ThemeContext";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function NavBar({ appName }) {
-    const { theme, toggleTheme } = useContext(ThemeContext);
-
-    const backgroundClassName = "has-background-" + theme;
-
-    let textClassName = "has-text-";
-
-    if (theme === "dark") {
-        textClassName += "light";
-    } else {
-        textClassName += "dark";
-    }
-
-    const className = backgroundClassName + " " + textClassName;
+    const { isAuthenticated } = useAuth("state");
+    const { logout } = useAuth("actions");
+    const navigate = useNavigate();
 
     return (
         <header>
             <nav
-                className={"navbar " + className}
+                className={"navbar has-background-dark"}
                 role="navigation"
                 aria-label="main navigation"
             >
@@ -41,17 +31,23 @@ function NavBar({ appName }) {
                 <NavMenu
                     items={[
                         { text: "Home", url: "/" },
-                        { text: "About", url: "/about" },
-                        { text: "Contact", url: "#contact" },
+                        { text: "Songs", url: "/songs" },
+                        { text: "Profile", url: "/profile" },
                     ]}
                 />
                 <button
-                    className={`button is-small is-${
-                        theme === "dark" ? "light" : "dark"
-                    }`}
-                    onClick={toggleTheme}
+                    className={`button is-small is-primary`}
+                    onClick={
+                        isAuthenticated
+                            ? () => {
+                                  logout();
+                              }
+                            : () => {
+                                  navigate("/login");
+                              }
+                    }
                 >
-                    Cambiar tema
+                    {isAuthenticated ? "Cerrar sesión" : "Iniciar Sesión"}
                 </button>
             </nav>
         </header>
