@@ -11,7 +11,7 @@ export default function Layout() {
                 className={`hero is-fullheight is-flex is-flex-direction-column`}
             >
                 <ThemeProvider>
-                <Navbar appName={"Harmonhub"} />
+                <Navbar appName={"Harmonyhub"} />
                     <Outlet />
                     <FooterBar
                         appName={"Harmonyhub"}
